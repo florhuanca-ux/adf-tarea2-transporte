@@ -30,6 +30,9 @@
 				},
 				{
 					"name": "derivedColumn2"
+				},
+				{
+					"name": "aggregate1"
 				}
 			],
 			"scriptLines": [
@@ -64,11 +67,20 @@
 				"  toDate(VigenciaHasta, 'dd/MM/yyyy'),",
 				"  toDate(left(VigenciaHasta, 10), 'yyyy-MM-dd'),",
 				"  addDays(toDate('1899-12-30'), toInteger(VigenciaHasta))",
-				")) ~> derivedColumn2",
-				"derivedColumn2 sink(allowSchemaDrift: true,",
+				"),",
+				"          CodigoPublicado = coalesce(CodigoPublicado, ParadaHistoricaId)) ~> derivedColumn2",
+				"derivedColumn2 aggregate(groupBy(ParadaHistoricaId),",
+				"     NombreParada = first(NombreParada),",
+				"          CodigoPublicado = first(CodigoPublicado),",
+				"          Zona = first(Zona),",
+				"          Latitud = first(Latitud),",
+				"          Longitud = first(Longitud),",
+				"          VigenciaDesde = first(VigenciaDesde),",
+				"          VigenciaHasta = first(VigenciaHasta),",
+				"          Estado = first(Estado)) ~> aggregate1",
+				"aggregate1 sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     input(",
-				"          AnioFuente as integer,",
 				"          ParadaHistoricaId as string,",
 				"          CodigoPublicado as string,",
 				"          NombreParada as string,",
@@ -88,7 +100,6 @@
 				"     skipDuplicateMapOutputs: true,",
 				"     errorHandlingOption: 'stopOnFirstError',",
 				"     mapColumn(",
-				"          AnioFuente,",
 				"          ParadaHistoricaId,",
 				"          CodigoPublicado,",
 				"          NombreParada,",
