@@ -64,7 +64,7 @@
 				")) ~> derivedColumn1",
 				"derivedColumn1 derive(KmRecorridos = toDecimal(replace(KmRecorridos, ',', '.'), 8, 1),",
 				"          EstadoViaje = upper(trim(EstadoViaje)),",
-				"          ValidacionesTarjeta = toInteger(trim(ValidacionesTarjeta)),",
+				"          ValidacionesTarjeta = coalesce(toInteger(ValidacionesTarjeta), 0),",
 				"          HoraProgramada = toTimestamp('2020-01-01 ' + trim(HoraProgramada), 'yyyy-MM-dd HH:mm'),",
 				"          HoraSalida = toTimestamp('2020-01-01 ' + trim(HoraSalida), 'yyyy-MM-dd HH:mm'),",
 				"          HoraLlegada = toTimestamp('2020-01-01 ' + trim(HoraLlegada), 'yyyy-MM-dd HH:mm')) ~> derivedColumn2",

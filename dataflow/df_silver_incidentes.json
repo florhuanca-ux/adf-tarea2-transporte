@@ -30,6 +30,9 @@
 				},
 				{
 					"name": "derivedColumn2"
+				},
+				{
+					"name": "aggregate1"
 				}
 			],
 			"scriptLines": [
@@ -73,7 +76,15 @@
 				"derivedColumn1 derive(TipoIncidente = upper(trim(TipoIncidente)),",
 				"          Severidad = upper(trim(Severidad)),",
 				"          Descripcion = trim(Descripcion)) ~> derivedColumn2",
-				"derivedColumn2 sink(allowSchemaDrift: true,",
+				"derivedColumn2 aggregate(groupBy(IncidenteId),",
+				"     TipoIncidente = first(TipoIncidente),",
+				"          Severidad = first(Severidad),",
+				"          FechaHoraInicio = first(FechaHoraInicio),",
+				"          FechaHoraFin = first(FechaHoraFin),",
+				"          FechaHoraRegistro = first(FechaHoraRegistro),",
+				"          VehiculoId = first(VehiculoId),",
+				"          Descripcion = first(Descripcion)) ~> aggregate1",
+				"aggregate1 sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     input(",
 				"          IncidenteId as string,",

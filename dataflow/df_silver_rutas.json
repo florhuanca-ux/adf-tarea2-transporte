@@ -27,6 +27,9 @@
 			"transformations": [
 				{
 					"name": "derivedColumn1"
+				},
+				{
+					"name": "aggregate1"
 				}
 			],
 			"scriptLines": [
@@ -53,7 +56,15 @@
 				"          VigenciaDesde = coalesce(  toDate(VigenciaDesde, 'dd/MM/yyyy'),  toDate(left(VigenciaDesde, 10), 'yyyy-MM-dd'),  addDays(toDate('1899-12-30'), toInteger(VigenciaDesde))),",
 				"          VigenciaHasta = coalesce(  toDate(VigenciaHasta, 'dd/MM/yyyy'),  toDate(left(VigenciaHasta, 10), 'yyyy-MM-dd'),  addDays(toDate('1899-12-30'), toInteger(VigenciaHasta))),",
 				"          RutaHistoricaId = iif(isNull(RutaHistoricaId),     'RH-' + lpad(regexReplace(CodigoRuta, '[^0-9]', ''), 2, '0'),     trim(RutaHistoricaId))) ~> derivedColumn1",
-				"derivedColumn1 sink(allowSchemaDrift: true,",
+				"derivedColumn1 aggregate(groupBy(RutaHistoricaId),",
+				"     CodigoRuta = first(CodigoRuta),",
+				"          NombreRuta = first(NombreRuta),",
+				"          Origen = first(Origen),",
+				"          Destino = first(Destino),",
+				"          VigenciaDesde = first(VigenciaDesde),",
+				"          VigenciaHasta = first(VigenciaHasta),",
+				"          Estado = first(Estado)) ~> aggregate1",
+				"aggregate1 sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     input(",
 				"          RutaHistoricaId as string,",
