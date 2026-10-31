@@ -88,7 +88,7 @@
 				"          RutaHistoricaId as string,",
 				"          VehiculoId as string,",
 				"          FechaServicio as string,",
-				"          {HoraProgramada } as string,",
+				"          HoraProgramada as string,",
 				"          HoraSalida as string,",
 				"          HoraLlegada as string,",
 				"          ValidacionesTarjeta as string,",
