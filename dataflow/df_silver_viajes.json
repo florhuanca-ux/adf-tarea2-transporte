@@ -30,6 +30,9 @@
 				},
 				{
 					"name": "derivedColumn2"
+				},
+				{
+					"name": "aggregate1"
 				}
 			],
 			"scriptLines": [
@@ -68,7 +71,17 @@
 				"          HoraProgramada = toTimestamp('2020-01-01 ' + trim(HoraProgramada), 'yyyy-MM-dd HH:mm'),",
 				"          HoraSalida = toTimestamp('2020-01-01 ' + trim(HoraSalida), 'yyyy-MM-dd HH:mm'),",
 				"          HoraLlegada = toTimestamp('2020-01-01 ' + trim(HoraLlegada), 'yyyy-MM-dd HH:mm')) ~> derivedColumn2",
-				"derivedColumn2 sink(allowSchemaDrift: true,",
+				"derivedColumn2 aggregate(groupBy(ViajeId),",
+				"     RutaHistoricaId = first(RutaHistoricaId),",
+				"          VehiculoId = first(VehiculoId),",
+				"          FechaServicio = first(FechaServicio),",
+				"          HoraProgramada = first(HoraProgramada),",
+				"          HoraSalida = first(HoraSalida),",
+				"          HoraLlegada = first(HoraLlegada),",
+				"          ValidacionesTarjeta = first(ValidacionesTarjeta),",
+				"          KmRecorridos = first(KmRecorridos),",
+				"          EstadoViaje = first(EstadoViaje)) ~> aggregate1",
+				"aggregate1 sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     input(",
 				"          ViajeId as string,",
