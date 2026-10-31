@@ -1,0 +1,112 @@
+{
+	"name": "df_silver_paradas",
+	"properties": {
+		"folder": {
+			"name": "silver"
+		},
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "dw_bronze_paradas_sql",
+						"type": "DatasetReference"
+					},
+					"name": "source1"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "dw_silver_paradas_sql",
+						"type": "DatasetReference"
+					},
+					"name": "sink1"
+				}
+			],
+			"transformations": [
+				{
+					"name": "derivedColumn1"
+				},
+				{
+					"name": "derivedColumn2"
+				},
+				{
+					"name": "select1"
+				}
+			],
+			"scriptLines": [
+				"source(output(",
+				"          AnioFuente as string,",
+				"          ParadaHistoricaId as string,",
+				"          CodigoPublicado as string,",
+				"          NombreParada as string,",
+				"          Zona as string,",
+				"          Latitud as string,",
+				"          Longitud as string,",
+				"          VigenciaDesde as string,",
+				"          VigenciaHasta as string,",
+				"          Estado as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     isolationLevel: 'READ_UNCOMMITTED',",
+				"     format: 'table') ~> source1",
+				"select1 derive(ParadaHistoricaId = trim(ParadaHistoricaId),",
+				"          NombreParada = trim(NombreParada),",
+				"          Zona = upper(trim(Zona)),",
+				"          Estado = upper(trim(Estado))) ~> derivedColumn1",
+				"derivedColumn1 derive(Latitud = toDecimal(trim(Latitud)),",
+				"          Longitud = toDecimal(trim(Longitud)),",
+				"          VigenciaDesde = iif(locate('-', VigenciaDesde) > 0, ",
+				"    right(VigenciaDesde, 2) + '/' + substring(VigenciaDesde, 6, 2) + '/' + left(VigenciaDesde, 4), ",
+				"    VigenciaDesde),",
+				"          VigenciaHasta = iif(locate('-', VigenciaHasta) > 0, ",
+				"    right(VigenciaHasta, 2) + '/' + substring(VigenciaHasta, 6, 2) + '/' + left(VigenciaHasta, 4), ",
+				"    VigenciaHasta)) ~> derivedColumn2",
+				"source1 select(mapColumn(",
+				"          ParadaHistoricaId,",
+				"          NombreParada,",
+				"          Zona,",
+				"          Latitud,",
+				"          Longitud,",
+				"          VigenciaDesde,",
+				"          VigenciaHasta,",
+				"          Estado",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> select1",
+				"derivedColumn2 sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     input(",
+				"          AnioFuente as integer,",
+				"          ParadaHistoricaId as string,",
+				"          CodigoPublicado as string,",
+				"          NombreParada as string,",
+				"          Zona as string,",
+				"          Latitud as decimal(9,6),",
+				"          Longitud as decimal(9,6),",
+				"          VigenciaDesde as date,",
+				"          VigenciaHasta as date,",
+				"          Estado as string",
+				"     ),",
+				"     deletable:false,",
+				"     insertable:true,",
+				"     updateable:false,",
+				"     upsertable:false,",
+				"     format: 'table',",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     errorHandlingOption: 'stopOnFirstError',",
+				"     mapColumn(",
+				"          ParadaHistoricaId,",
+				"          NombreParada,",
+				"          Zona,",
+				"          Latitud,",
+				"          Longitud,",
+				"          Estado",
+				"     )) ~> sink1"
+			]
+		}
+	}
+}

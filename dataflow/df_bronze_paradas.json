@@ -63,9 +63,6 @@
 				},
 				{
 					"name": "union3"
-				},
-				{
-					"name": "select4"
 				}
 			],
 			"scriptLines": [
@@ -160,21 +157,9 @@
 				"     ),",
 				"     skipDuplicateMapInputs: true,",
 				"     skipDuplicateMapOutputs: true) ~> select3",
-				"select1, select4 union(byName: true)~> union1",
+				"select1, sql union(byName: true)~> union1",
 				"union1, select3 union(byName: true)~> union2",
 				"union2, select2 union(byName: true)~> union3",
-				"sql select(mapColumn(",
-				"          ParadaHistoricaId,",
-				"          NombreParada,",
-				"          Zona,",
-				"          Latitud,",
-				"          Longitud,",
-				"          VigenciaDesde,",
-				"          VigenciaHasta,",
-				"          Estado",
-				"     ),",
-				"     skipDuplicateMapInputs: true,",
-				"     skipDuplicateMapOutputs: true) ~> select4",
 				"union3 sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     input(",
