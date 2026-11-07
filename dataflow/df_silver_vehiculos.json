@@ -57,7 +57,7 @@
 				"derivedColumn1 derive(VigenciaDesde = coalesce(  toDate(VigenciaDesde, 'dd/MM/yyyy'),  toDate(left(VigenciaDesde, 10), 'yyyy-MM-dd'),  addDays(toDate('1899-12-30'), toInteger(VigenciaDesde))),",
 				"          VigenciaHasta = coalesce(  toDate(VigenciaHasta, 'dd/MM/yyyy'),  toDate(left(VigenciaHasta, 10), 'yyyy-MM-dd'),  addDays(toDate('1899-12-30'), toInteger(VigenciaHasta))),",
 				"          CapacidadEfectiva = toInteger(CapacidadEfectiva)) ~> derivedColumn2",
-				"derivedColumn2 aggregate(groupBy(VehiculoId = source1@VehiculoId),",
+				"derivedColumn2 aggregate(groupBy(VehiculoId),",
 				"     Placa = first(Placa),",
 				"          TipoVehiculo = first(TipoVehiculo),",
 				"          CapacidadEfectiva = first(CapacidadEfectiva),",
